@@ -3437,13 +3437,14 @@ dependencies = [
 
 [[package]]
 name = "sql-help"
-version = "0.1.0"
+version = "0.1.3"
 dependencies = [
  "cargo-diet",
  "cargo-dist",
  "cargo-release",
  "regex",
  "rustdoc-md",
+ "url",
 ]
 
 [[package]]

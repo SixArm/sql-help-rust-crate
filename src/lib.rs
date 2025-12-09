@@ -1,1 +1,1 @@
-mod help;
+mod scans;
