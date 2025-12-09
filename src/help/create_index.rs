@@ -7,15 +7,15 @@ use regex::Regex;
 #[allow(dead_code)]
 pub static REGEX: LazyLock<Regex> = LazyLock::new(|| {
         Regex::new(
-        r"(?x)  # verbose mode
+        r"(?x) # verbose mode
         (?<create_chunk>CREATE\s+)
         (?<unique_chunk>UNIQUE\s+)?
         (?<index_chunk>INDEX\s+)
         (?<if_not_exists_chunk>IF\s+NOT\s+EXISTS\s+)?
-        (?<index_name_chunk>\w+\s+)
+        (?<index_name_chunk>(?<index_name>\w+)\s+)
         (?<on_chunk>ON\s+)
-        (?<table_chunk>\w+\s*)
-        (?<column_chunk>\(\s*[\w\s,]+\s*\)\s*)
+        (?<table_chunk>(?<table_name>\w+)\s*)
+        (?<column_chunk>\(\s*(?<column_names>[\w\s,]+)\s*\)\s*)
         ;
         "
     ).expect("REGEX")
@@ -64,10 +64,13 @@ mod tests {
             assert!(captures.name("unique_chunk").is_none());
             assert_eq!(&captures["index_chunk"], "INDEX ");
             assert_eq!(&captures["index_name_chunk"], "my_index ");
+            assert_eq!(&captures["index_name"], "my_index");
             assert!(captures.name("if_not_exists_chunk").is_none());
             assert_eq!(&captures["on_chunk"], "ON ");
             assert_eq!(&captures["table_chunk"], "my_table ");
+            assert_eq!(&captures["table_name"], "my_table");
             assert_eq!(&captures["column_chunk"], "(my_column) ");
+            assert_eq!(&captures["column_names"], "my_column");
         }
 
         #[test]
@@ -78,10 +81,13 @@ mod tests {
             assert!(captures.name("unique_chunk").is_none());
             assert_eq!(&captures["index_chunk"], "INDEX\n");
             assert_eq!(&captures["index_name_chunk"], "my_index\n");
+            assert_eq!(&captures["index_name"], "my_index");
             assert!(captures.name("if_not_exists_chunk").is_none());
             assert_eq!(&captures["on_chunk"], "ON\n");
             assert_eq!(&captures["table_chunk"], "my_table\n");
+            assert_eq!(&captures["table_name"], "my_table");
             assert_eq!(&captures["column_chunk"], "(my_column)\n");
+            assert_eq!(&captures["column_names"], "my_column");
         }
 
         #[test]
@@ -93,10 +99,13 @@ mod tests {
             assert!(captures.name("if_not_exists_chunk").is_none());
             assert_eq!(&captures["index_chunk"], "INDEX ");
             assert_eq!(&captures["index_name_chunk"], "my_index ");
+            assert_eq!(&captures["index_name"], "my_index");
             assert!(captures.name("if_not_exists_chunk").is_none());
             assert_eq!(&captures["on_chunk"], "ON ");
             assert_eq!(&captures["table_chunk"], "my_table ");
+            assert_eq!(&captures["table_name"], "my_table");
             assert_eq!(&captures["column_chunk"], "(my_column) ");
+            assert_eq!(&captures["column_names"], "my_column");
         }
 
         #[test]
@@ -108,10 +117,13 @@ mod tests {
             assert_eq!(&captures["if_not_exists_chunk"], "IF NOT EXISTS ");
             assert_eq!(&captures["index_chunk"], "INDEX ");
             assert_eq!(&captures["index_name_chunk"], "my_index ");
+            assert_eq!(&captures["index_name"], "my_index");
             assert_eq!(&captures["if_not_exists_chunk"], "IF NOT EXISTS ");
             assert_eq!(&captures["on_chunk"], "ON ");
             assert_eq!(&captures["table_chunk"], "my_table ");
+            assert_eq!(&captures["table_name"], "my_table");
             assert_eq!(&captures["column_chunk"], "(my_column) ");
+            assert_eq!(&captures["column_names"], "my_column");
         }
 
         #[test]
@@ -122,10 +134,13 @@ mod tests {
             assert!(captures.name("unique_chunk").is_none());
             assert_eq!(&captures["index_chunk"], "INDEX ");
             assert_eq!(&captures["index_name_chunk"], "my_index ");
+            assert_eq!(&captures["index_name"], "my_index");
             assert!(captures.name("if_not_exists_chunk").is_none());
             assert_eq!(&captures["on_chunk"], "ON ");
             assert_eq!(&captures["table_chunk"], "my_table ");
+            assert_eq!(&captures["table_name"], "my_table");
             assert_eq!(&captures["column_chunk"], "(my_column_1, my_column_2, my_column_3) ");
+            assert_eq!(&captures["column_names"], "my_column_1, my_column_2, my_column_3");
         }
 
     }

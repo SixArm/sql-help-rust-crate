@@ -1,6 +1,6 @@
 [package]
 name = "sql-help"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Joel Parker Henderson <joel@joelparkerhenderson.com>"]
 description = "sql-help: parse SQL text then print any SQL help that we know of, such as optimizations, clarifications. Work in progress."
